@@ -24,13 +24,25 @@ def quantize_and_save_int8(input_file, output_file):
     return scale, zp
 
 def main():
-    os.makedirs("weights_int8_txt", exist_ok=True)
-    input_dir = "weights_txt"
+    # 1. 현재 스크립트(quantize_to_txt.py)가 있는 'numpy' 폴더의 절대 경로를 구합니다.
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    
+    # 2. 절대 경로를 바탕으로 폴더 위치를 명확하게 지정합니다.
+    input_dir = os.path.join(BASE_DIR, "weights_txt")
+    output_dir = os.path.join(BASE_DIR, "weights_int8_txt")
+    
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # 이제 절대 경로(input_dir)에서 파일 목록을 가져옵니다.
     files = [f for f in os.listdir(input_dir) if "weight" in f]
     
     print("--- INT8 Quantization Table ---")
     for f in files:
-        s, z = quantize_and_save_int8(f"{input_dir}/{f}", f"weights_int8_txt/{f}")
+        # 파일 경로도 정확하게 합쳐서 넘겨줍니다.
+        in_path = os.path.join(input_dir, f)
+        out_path = os.path.join(output_dir, f)
+        
+        s, z = quantize_and_save_int8(in_path, out_path)
         print(f"File: {f:20} | Scale: {s:.6f} | ZP: {z}")
 
 if __name__ == "__main__":
