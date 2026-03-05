@@ -71,3 +71,24 @@ class LeNet5NumPy:
         if debug: print(f"Final Output: {x.shape}")
         
         return x
+    
+if __name__ == "__main__":
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    weights_dir = os.path.join(BASE_DIR, "weights_txt")
+    
+    print("1. Loading NumPy Model (FP32)...")
+    model = LeNet5NumPy(weight_dir=weights_dir)
+    
+    print("2. Loading Test Image...")
+    img_path = os.path.join(BASE_DIR, "test_image_0.txt")
+    # 하드웨어 메모리에서 읽어오듯 txt 로드 후 1x32x32 형태로 변환
+    img = np.loadtxt(img_path).reshape(1, 32, 32)
+    
+    print("3. Running Hardware Simulation Inference...")
+    out = model.forward(img, debug=True)
+    
+    pred = np.argmax(out)
+    print(f"\n[ 결과 확인 ]")
+    print(f"Final Output Array: \n{out}")
+    print(f"Predicted Label: {pred}")
+    print(f"Expected Label: 7")
